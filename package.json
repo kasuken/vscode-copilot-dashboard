@@ -1,0 +1,102 @@
+{
+  "name": "vscode-copilot-dashboard",
+  "displayName": "Copilot Dashboard",
+  "description": "Browse GitHub Copilot agents, instructions, prompts, skills, hooks, and MCP servers in one VS Code dashboard.",
+  "author": "emanuelebartolesi",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/kasuken"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kasuken/vscode-copilot-dashboard.git"
+  },
+  "categories": [
+    "Other",
+    "AI",
+    "Chat",
+    "Machine Learning",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "copilot",
+    "github copilot",
+    "agents",
+    "instructions",
+    "prompts",
+    "skills",
+    "mcp",
+    "dashboard",
+    "workspace",
+    "customization"
+  ],
+  "icon": "media/CopilotDashboard.png",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "copilot-dashboard",
+          "title": "Copilot Dashboard",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "copilot-dashboard": [
+        {
+          "type": "webview",
+          "id": "copilotDashboard.view",
+          "name": "Copilot Configuration",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "copilotDashboard.refresh",
+        "title": "Refresh Copilot Dashboard",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "copilotDashboard.refresh",
+          "when": "view == copilotDashboard.view",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.110.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
