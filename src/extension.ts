@@ -288,8 +288,8 @@ function buildDashboardHtml(data: CopilotData): string {
 	const hasWorkspace = (vscode.workspace.workspaceFolders?.length ?? 0) > 0;
 
 	const sections: SectionDef[] = [
-		{ id: 'agents',       label: 'Custom Agents',       icon: ICONS.agent,       items: data.agents,       emptyText: 'No agents found (.github/agents/ · .claude/agents/)' },
-		{ id: 'instructions', label: 'Custom Instructions', icon: ICONS.instruction, items: data.instructions, emptyText: 'No instruction files (*.instructions.md · .github/copilot-instructions.md · AGENTS.md)' },
+		{ id: 'agents',       label: 'Agents',       icon: ICONS.agent,       items: data.agents,       emptyText: 'No agents found (.github/agents/ · .claude/agents/)' },
+		{ id: 'instructions', label: 'Instructions', icon: ICONS.instruction, items: data.instructions, emptyText: 'No instruction files (*.instructions.md · .github/copilot-instructions.md · AGENTS.md)' },
 		{ id: 'prompts',      label: 'Prompt Files',        icon: ICONS.prompt,      items: data.prompts,      emptyText: 'No prompt files found (.github/prompts/)' },
 		{ id: 'skills',       label: 'Agent Skills',        icon: ICONS.skill,       items: data.skills,       emptyText: 'No skills found (.github/skills/)' },
 		{ id: 'hooks',        label: 'Hooks',               icon: ICONS.hook,        items: data.hooks,        emptyText: 'No hooks found (.github/hooks/)' },

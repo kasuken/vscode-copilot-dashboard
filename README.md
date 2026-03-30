@@ -21,6 +21,10 @@ The extension is built as a lightweight webview-backed explorer for teams workin
 > [!NOTE]
 > The current version focuses on discovery and navigation. It does not edit, validate, or generate customization files from the dashboard itself.
 
+<div align="center">
+<img src="./media/screenshot.png" alt="Copilot Dashboard screenshot" width="700" />
+</div>
+
 ## Features
 
 - Dedicated Copilot Dashboard view in the Activity Bar.
