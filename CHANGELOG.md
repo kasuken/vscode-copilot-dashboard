@@ -1,5 +1,18 @@
 # Change Log
 
+## [0.0.3] - 2026-03-30
+
+### Fixed
+
+- Fixed TypeScript build errors by adding `node` and `mocha` type declarations to `tsconfig.json`.
+- Renamed section labels from "Custom Agents" / "Custom Instructions" to "Agents" / "Instructions" for consistency.
+
+### Added
+
+- Added dashboard screenshot to `media/screenshot.png`.
+- Added screenshot to the README for a visual overview of the extension.
+- Added `changelog` prompt file to `.github/prompts/`.
+
 ## [0.0.2] - 2026-03-25
 
 ### Fixed
