@@ -253,8 +253,10 @@ const ICONS = {
 	hook:        `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1A3 3 0 0 0 4.5 4v2H3v1h1.5v6.5A1.5 1.5 0 0 0 6 15h4a1.5 1.5 0 0 0 1.5-1.5V7H13V6h-1.5V4A3 3 0 0 0 8.5 1h-1zm0 1h1A2 2 0 0 1 10.5 4v2h-5V4A2 2 0 0 1 7.5 2zm-2 5h5v6.5a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5V7z"/></svg>`,
 	mcp:         `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5 1a2 2 0 0 0-2 2v3l-2 1.5V15h14V7.5L13 6V3a2 2 0 0 0-2-2H5zm0 1h6a1 1 0 0 1 1 1v3.5l.44.33L14 8.17V14H2V8.17l1.56-1.34L4 6.5V3a1 1 0 0 1 1-1zm2 7v2h2V9H7z"/></svg>`,
 	file:        `<svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M4 1h6.5L13 3.5V15H3V1h1zm1 1v12h7V4.5H9V2H5zm5-.29V3.5h.79L10 1.71z"/></svg>`,
-	chevron:     `<svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><path d="M2 1l4 3-4 3" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-	refresh:     `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5A6.5 6.5 0 0 0 2.5 8H1l2.5 3L6 8H4.5a4.5 4.5 0 1 1 1.32 3.18l-.71.71A5.5 5.5 0 1 0 13.5 2.5z"/></svg>`,
+	chevron:      `<svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><path d="M2 1l4 3-4 3" stroke="currentColor" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+	refresh:      `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 2.5A6.5 6.5 0 0 0 2.5 8H1l2.5 3L6 8H4.5a4.5 4.5 0 1 1 1.32 3.18l-.71.71A5.5 5.5 0 1 0 13.5 2.5z"/></svg>`,
+	collapseAll:  `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l5-5 5 5M3 6l5-5 5 5"/></svg>`,
+	expandAll:    `<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l5 5 5-5M3 10l5 5 5-5"/></svg>`,
 };
 
 // ── HTML Builder ──────────────────────────────────────────────────────────────
@@ -320,8 +322,11 @@ function buildDashboardHtml(data: CopilotData): string {
 		</div>`;
 	}).join('');
 
+	const anyOpen = sections.some(s => s.items.length > 0);
+	const sectionsBarHtml = `<div class="sections-bar"><button id="btn-toggle-all" class="icon-btn" title="${anyOpen ? 'Collapse all' : 'Expand all'}">${anyOpen ? ICONS.collapseAll : ICONS.expandAll}</button></div>`;
+
 	const mainContent = hasWorkspace
-		? statsHtml + sectionsHtml
+		? statsHtml + sectionsBarHtml + sectionsHtml
 		: `<div class="no-workspace">
 			<div class="nw-icon">${ICONS.agent}</div>
 			<p>Open a workspace folder to see your Copilot configuration.</p>
@@ -371,6 +376,11 @@ body{font-family:var(--vscode-font-family);font-size:12px;color:var(--vscode-for
 .badge-model{display:inline-block;font-size:9px;font-weight:500;padding:0 5px;margin-left:5px;border-radius:3px;vertical-align:middle;background:var(--vscode-badge-background);color:var(--vscode-badge-foreground);opacity:.85;white-space:nowrap}
 .empty-state{padding:4px 8px 6px 22px;font-size:11px;font-style:italic;color:var(--vscode-descriptionForeground);opacity:.75}
 
+/* ── Sections bar ───────────────────────────── */
+.sections-bar{display:flex;justify-content:flex-end;padding:2px 6px;border-bottom:1px solid var(--vscode-widget-border,rgba(128,128,128,.12))}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--vscode-descriptionForeground);display:flex;align-items:center;padding:2px 4px;border-radius:3px;opacity:.65}
+.icon-btn:hover{background:var(--vscode-list-hoverBackground);opacity:1}
+
 /* ── No Workspace ────────────────────────────── */
 .no-workspace{display:flex;flex-direction:column;align-items:center;padding:32px 20px 20px;color:var(--vscode-descriptionForeground);gap:12px;text-align:center}
 .nw-icon{opacity:.35;transform:scale(2.8)}
@@ -387,20 +397,36 @@ ${mainContent}
 <script nonce="${nonce}">
 (function(){
 	const vsc=acquireVsCodeApi();
+	const ICON_COLLAPSE=${JSON.stringify(ICONS.collapseAll)};
+	const ICON_EXPAND=${JSON.stringify(ICONS.expandAll)};
+	function syncToggleBtn(){
+		const btn=document.getElementById('btn-toggle-all');if(!btn)return;
+		const anyOpen=[...document.querySelectorAll('.section-body')].some(b=>b.classList.contains('open'));
+		btn.innerHTML=anyOpen?ICON_COLLAPSE:ICON_EXPAND;
+		btn.title=anyOpen?'Collapse all':'Expand all';
+	}
 	document.querySelectorAll('.section-header').forEach(h=>{
 		h.addEventListener('click',()=>{
 			const b=document.getElementById('s-'+h.dataset.section);
 			const c=h.querySelector('.chevron');
 			if(b)b.classList.toggle('open');
 			if(c)c.classList.toggle('open');
+			syncToggleBtn();
 		});
 	});
+	const toggleAllBtn=document.getElementById('btn-toggle-all');
+	if(toggleAllBtn){toggleAllBtn.addEventListener('click',()=>{
+		const anyOpen=[...document.querySelectorAll('.section-body')].some(b=>b.classList.contains('open'));
+		document.querySelectorAll('.section-body').forEach(b=>b.classList.toggle('open',!anyOpen));
+		document.querySelectorAll('.section-header .chevron').forEach(c=>c.classList.toggle('open',!anyOpen));
+		syncToggleBtn();
+	});}
 	document.querySelectorAll('.stat-card[data-goto]').forEach(card=>{
 		card.addEventListener('click',()=>{
 			const id=card.dataset.goto;
 			const b=document.getElementById('s-'+id);
 			const h=document.querySelector('.section-header[data-section="'+id+'"]');
-			if(b){b.classList.add('open');if(h){h.querySelector('.chevron')?.classList.add('open');h.scrollIntoView({behavior:'smooth',block:'nearest'});}}
+			if(b){const opening=!b.classList.contains('open');b.classList.toggle('open');if(h){h.querySelector('.chevron')?.classList.toggle('open');if(opening)h.scrollIntoView({behavior:'smooth',block:'nearest'});}}
 		});
 	});
 	document.querySelectorAll('.item[data-path]').forEach(item=>{
