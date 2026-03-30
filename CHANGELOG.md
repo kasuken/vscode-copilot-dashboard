@@ -1,5 +1,13 @@
 # Change Log
 
+## [0.0.4] - 2026-03-30
+
+### Added
+
+- Added collapse all and expand all buttons to the dashboard sections bar.
+- Added SVG icons for collapse and expand actions.
+- JavaScript now synchronizes toggle button states based on current section visibility.
+
 ## [0.0.3] - 2026-03-30
 
 ### Fixed
